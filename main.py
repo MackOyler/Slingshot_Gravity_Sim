@@ -22,6 +22,15 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
+class Planet:
+    def __init__(self, x, y, mass):
+        self.x = x
+        self.y = y
+        self.mass = mass
+        
+    def draw(self):
+        win.blit(PLANET, (self.x - PLANET_SIZE, self.y - PLANET_SIZE))
+
 class Spacecraft:
     def __init__(self, x, y, vel_x, vel_y, mass):
         self.x = x
@@ -40,8 +49,8 @@ class Spacecraft:
 def create_ship(location, mouse):
     t_x, t_y = location
     m_x, m_y = mouse
-    vel_x = m_x - t_x
-    vel_y = m_y - t_y
+    vel_x = (m_x - t_x) / VEL_SCALE
+    vel_y = (m_y - t_y) / VEL_SCALE
     obj = Spacecraft(t_x, t_y, vel_x, vel_y, SHIP_MASS)
     return obj
 
@@ -49,6 +58,7 @@ def main():
     running = True
     clock = pygame.time.Clock()
     
+    planet = Planet(WIDTH // 2, HEIGHT // 2, PLANET_MASS)
     objects = []
     temp_obj_pos = None
     
@@ -62,8 +72,7 @@ def main():
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if temp_obj_pos:
-                    t_x, t_y = temp_obj_pos
-                    obj = Spacecraft(t_x, t_y, 1, 1, SHIP_MASS)
+                    obj = create_ship(temp_obj_pos, mouse_pos)
                     objects.append(obj)
                     temp_obj_pos = None
                 else:    
@@ -75,10 +84,16 @@ def main():
             pygame.draw.line(win, WHITE, temp_obj_pos, mouse_pos, 2)
             pygame.draw.circle(win, RED, temp_obj_pos, OBJ_SIZE)
             
-        for obj in objects:
+        for obj in objects[:]:
             obj.draw()
             obj.move()
-
+            off_screen = obj.x < 0 or obj.x > WIDTH or obj.y < 0 or obj.y > HEIGHT
+            collided = math.sqrt((obj.x - planet.x)**2 + (obj.y - planet.y)**2) <= PLANET_SIZE
+            if off_screen or collided:
+                objects.remove(obj)
+                
+        planet.draw()
+                
         pygame.display.update()
 
     pygame.quit()
