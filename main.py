@@ -5,7 +5,7 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 600
 win = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Gravitational Slingshot")
+pygame.display.set_caption("Gravitational Slingshot Effect")
 
 PLANET_MASS = 100
 SHIP_MASS = 5
@@ -27,7 +27,7 @@ class Planet:
         self.x = x
         self.y = y
         self.mass = mass
-        
+    
     def draw(self):
         win.blit(PLANET, (self.x - PLANET_SIZE, self.y - PLANET_SIZE))
 
@@ -38,23 +38,23 @@ class Spacecraft:
         self.vel_x = vel_x
         self.vel_y = vel_y
         self.mass = mass
-        
+
     def move(self, planet=None):
         distance = math.sqrt((self.x - planet.x)**2 + (self.y - planet.y)**2)
         force = (G * self.mass * planet.mass) / distance ** 2
         
         acceleration = force / self.mass
         angle = math.atan2(planet.y - self.y, planet.x - self.x)
-        
+
         acceleration_x = acceleration * math.cos(angle)
         acceleration_y = acceleration * math.sin(angle)
-        
-        self.vel_x += self.vel_x
-        self.vel_y += self.vel_y
-        
+
+        self.vel_x += acceleration_x
+        self.vel_y += acceleration_y
+
         self.x += self.vel_x
         self.y += self.vel_y
-
+    
     def draw(self):
         pygame.draw.circle(win, RED, (int(self.x), int(self.y)), OBJ_SIZE)
 
@@ -69,33 +69,33 @@ def create_ship(location, mouse):
 def main():
     running = True
     clock = pygame.time.Clock()
-    
+
     planet = Planet(WIDTH // 2, HEIGHT // 2, PLANET_MASS)
     objects = []
     temp_obj_pos = None
-    
+
     while running:
         clock.tick(FPS)
-        
+
         mouse_pos = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if temp_obj_pos:
                     obj = create_ship(temp_obj_pos, mouse_pos)
                     objects.append(obj)
                     temp_obj_pos = None
-                else:    
+                else:
                     temp_obj_pos = mouse_pos
-                
+
         win.blit(BG, (0, 0))
-        
+
         if temp_obj_pos:
             pygame.draw.line(win, WHITE, temp_obj_pos, mouse_pos, 2)
             pygame.draw.circle(win, RED, temp_obj_pos, OBJ_SIZE)
-            
+        
         for obj in objects[:]:
             obj.draw()
             obj.move(planet)
@@ -103,11 +103,11 @@ def main():
             collided = math.sqrt((obj.x - planet.x)**2 + (obj.y - planet.y)**2) <= PLANET_SIZE
             if off_screen or collided:
                 objects.remove(obj)
-                
-        planet.draw()
-                
-        pygame.display.update()
 
+        planet.draw()
+
+        pygame.display.update()
+    
     pygame.quit()
 
 if __name__ == "__main__":
