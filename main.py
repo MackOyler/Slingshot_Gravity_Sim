@@ -40,6 +40,18 @@ class Spacecraft:
         self.mass = mass
         
     def move(self, planet=None):
+        distance = math.sqrt((self.x - planet.x)**2 + (self.y - planet.y)**2)
+        force = (G * self.mass * planet.mass) / distance ** 2
+        
+        acceleration = force / self.mass
+        angle = math.atan2(planet.y - self.y, planet.x - self.x)
+        
+        acceleration_x = acceleration * math.cos(angle)
+        acceleration_y = acceleration * math.sin(angle)
+        
+        self.vel_x += self.vel_x
+        self.vel_y += self.vel_y
+        
         self.x += self.vel_x
         self.y += self.vel_y
 
@@ -86,7 +98,7 @@ def main():
             
         for obj in objects[:]:
             obj.draw()
-            obj.move()
+            obj.move(planet)
             off_screen = obj.x < 0 or obj.x > WIDTH or obj.y < 0 or obj.y > HEIGHT
             collided = math.sqrt((obj.x - planet.x)**2 + (obj.y - planet.y)**2) <= PLANET_SIZE
             if off_screen or collided:
