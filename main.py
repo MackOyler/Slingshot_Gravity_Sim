@@ -37,6 +37,14 @@ class Spacecraft:
     def draw(self):
         pygame.draw.circle(win, RED, (int(self.x), int(self.y)), OBJ_SIZE)
 
+def create_ship(location, mouse):
+    t_x, t_y = location
+    m_x, m_y = mouse
+    vel_x = m_x - t_x
+    vel_y = m_y - t_y
+    obj = Spacecraft(t_x, t_y, vel_x, vel_y, SHIP_MASS)
+    return obj
+
 def main():
     running = True
     clock = pygame.time.Clock()
