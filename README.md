@@ -1,6 +1,6 @@
 # Gravitational Slingshot Effect Simulation
 
-![Gravitational Slingshot](https://example.com/path-to-your-image.jpg) <!-- You can add a relevant image or screenshot of your simulation here -->
+![Gravitational Slingshot](https://github.com/MackOyler/Slingshot_Gravity_Sim/blob/main/RMimg.png) <!-- You can add a relevant image or screenshot of your simulation here -->
 
 ## Overview
 
